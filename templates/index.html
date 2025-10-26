@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gallery</title>
+</head>
+<body>
+    <h1>Comics</h1>
+    <ul>
+        {% for comic in comics %}
+            <li><a href="/comics/{{ comic }}">{{ comic }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
