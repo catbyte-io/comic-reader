@@ -12,6 +12,12 @@ def index():
 
 @app.route('/comics/<comic>')
 def comic_page(comic):
-    # Images in the comic folder
-    images = os.listdir(f'comics/{comic}')
+    # Chapters in the comic folder
+    chapters = os.listdir(f'comics/{comic}')
     return render_template('comic.html')
+
+@app.route('/comics/<comic>/<chapter>')
+def chapter_page(comic, chapter):
+    # Images in the chapter folder
+    images = os.listdir(f'comics/{comic}/{chapter}')
+    return render_template('chapter.html')
