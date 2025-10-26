@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ folder }}</title>
+</head>
+<body>
+    <h1>{{ folder }}</h1>
+    <ul>
+        {% for chapter in chapters %}
+            <li><a href="/comics/{{ comic }}/{{chapter}}">{{ chapter }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
