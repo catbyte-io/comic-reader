@@ -1,0 +1,300 @@
+@import url(/static/css/fonts.css);
+:root {
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Override stubborn Bootstrap vars */
+  --bs-body-font-family: 'Ubuntu Light', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --bs-link-color: #10bcf0;
+
+  /* CKEditor */
+  --ck-color-base-background: #2e2e2e; /* Dark background */
+  --ck-color-base-text: #ffffff; /* Light text */
+  --ck-color-background: #2e2e2e; /* Dark background */
+  --ck-color-text: #ffffff; /* Light text */
+}
+
+/* Custom scroll bar */
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+a {
+  font-weight: 500;
+  color: var(--bs-link-color);
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  font-family: var(--bs-body-font-family);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+code {
+  font-family: 'Ubuntu Mono';
+}
+
+footer {
+  /* Keep footer at the bottom and control text size */
+  bottom: 0;
+  font-size: .75em;
+}
+
+h1 {
+  font-family: 'Ubuntu';
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+i {
+  font-size: 4em;
+}
+
+li {
+  font-size: 1.5em;
+}
+
+main {
+  /* Make sure main content fills the page */
+  flex: 1;
+}
+
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+#content {
+  margin-top: 3rem;
+}
+
+.accent.mint {
+  color: #00f1f5ac;
+}
+
+.card {
+  padding: 2em;
+}
+
+.center {
+  object-position: center;
+}
+
+.ck.ck-editor {
+  font-family: var(--bs-body-font-family);
+  background-color: var(--ck-color-base-background);
+  color: var(--ck-color-base-text);
+}
+
+.fill-width {
+  /* Have the main focus fill the width of the parent element */
+  width: 100%;
+  height: auto;
+}
+
+/* Image container so we can do overlays */
+.image-container {
+  display: inline-block;
+}
+
+.list-item {
+  flex: 100%;
+  max-width: 100%;
+  font-size: 1.5em;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.vanilla:hover {
+  filter: drop-shadow(0 0 2em #3178c6aa);
+}
+.logo.mint:hover {
+  filter: drop-shadow(0 0 2em #01fbffea);
+}
+
+.logo-main {
+  width: 300px;
+  display: inline-block;
+  object-position: center;
+}
+
+/* Paw prints to follow mouse */
+.paw-print {
+  width: 30px;
+  height: 30px;
+  background: url(../images/PawSiren.png);
+  background-size: cover;
+  position: absolute;
+  opacity: 0.5;
+  pointer-events: none;
+  animation: fade-out 2s linear;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* Responsive grid layout as implemented at https://www.w3schools.com/howto/howto_css_image_grid_responsive.asp */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 4px;
+}
+
+.column {
+  /* Each column takes a quarter of the space */
+  flex: 25%;
+  max-width: 25%;
+  padding: 0 4px;
+}
+
+.column img {
+  margin-top: 8px;
+  vertical-align: middle;
+  width: 100%;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* For menu icons */
+button.icon {
+  background-color: transparent;
+  border: 5px solid transparent;
+  border-radius: 2rem;
+  color: #00f2f5;
+  font-weight: 400;
+  line-height: 1.5rem;
+  padding: 0.375rem 0.375rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  vertical-align: middle;
+}
+button.icon:hover {
+  color: #e6e3e5;
+}
+
+/* Fade for mouse chaser paw prints */
+@keyframes fade-out {
+  from { 
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+/* Responsive grid layout (two instead of four) */
+@media screen and (max-width: 800px) {
+  .column {
+    flex: 50%;
+    max-width: 50%;
+  }
+}
+
+/* Responsive stacking columns */
+@media screen and (max-width: 600px) {
+  .column {
+    flex: 100%;
+    max-width: 100%;
+  }
+}
+
+/* Responsive layout for homescreen character links */
+@media screen and (min-width: 800px) {
+  .image-container {
+    position: relative;
+    height: 100%;
+  }
+  .image-overlay {
+    display: block;
+    position: absolute;
+    height: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.57);
+  }
+  .list-item {
+    padding-top: 15%;
+    flex: 50%;
+    max-width: 50%;
+    font-size: 2em;
+  }
+  .list-item a {
+    color: #f9f9f9;
+  }
+  .list-item a:hover {
+    color: var(--bs-link-color);
+  }
+}
