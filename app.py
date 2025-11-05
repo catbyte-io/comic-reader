@@ -6,18 +6,24 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    # List the comics based on directory names from the 'comics' folder
-    comics = os.listdir('comics')
-    return render_template('index.html', comics=comics)
+    # List the language options based on directory names from the 'data' folder
+    languages = os.listdir('data')
+    return render_template('index.html', languages=languages)
 
-@app.route('/comics/<comic>')
-def comic_page(comic):
-    # Chapters in the comic folder
-    chapters = os.listdir(f'comics/{comic}')
-    return render_template('comic.html')
+@app.route('/<language>')
+def comics_list(language):
+    # List available comics for the folder
+    comics = os.listdir(f'data/{language}')
+    return render_template('comics_list.html', comics=comics)
 
-@app.route('/comics/<comic>/<chapter>')
-def chapter_page(comic, chapter):
+@app.route('/<language>/<comic>')
+def episodes_list(language, comic):
+    # List available episodes for the comic
+    episodes = os.listdir(f'data/{language}/{comic}')
+    return render_template('episodes_list.html', episodes=episodes)
+
+@app.route('/<language>/<comic>/<episode>')
+def episode_page(comic, episode):
     # Images in the chapter folder
-    images = os.listdir(f'comics/{comic}/{chapter}')
-    return render_template('chapter.html')
+    images = os.listdir(f'data/{language}/{comic}/{episode}')
+    return render_template('episode.html')
