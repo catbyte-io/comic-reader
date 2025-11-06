@@ -120,6 +120,14 @@ def main():
                         count += 1
                         filename = str(count).zfill(4)
 
+                    # Prevent rapid requests
+                    time.sleep(5)
+
+
+                except Exception as e:
+                    print(f'Exception: {type(e).__name__} {e}')
+
+            # Prevent rapid requests
             time.sleep(5)
 
 
