@@ -1,70 +1,70 @@
 /* Define custom font */
 @font-face {
     font-family: 'Ubuntu Light';
-    src: url('../fonts/Ubuntu/Ubuntu-L.ttf') format('truetype');
+    src: url('../fonts/ubuntu/Ubuntu-L.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Ubuntu Light Italic';
-    src: url('../fonts/Ubuntu/Ubuntu-LI.ttf') format('truetype');
+    src: url('../fonts/ubuntu/Ubuntu-LI.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Ubuntu Mono';
-    src: url('../fonts/Ubuntu/UbuntuMono-R.ttf') format('truetype');
+    src: url('../fonts/ubuntu/UbuntuMono-R.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Ubuntu Mono Bold';
-    src: url('../fonts/Ubuntu/UbuntuMono-B.ttf') format('truetype');
+    src: url('../fonts/ubuntu/UbuntuMono-B.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Ubuntu';
-    src: url('../fonts/Ubuntu/Ubuntu-R.ttf') format('truetype');
+    src: url('../fonts/ubuntu/Ubuntu-R.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Ubuntu Italic';
-    src: url('../fonts/Ubuntu/Ubuntu-RI.ttf') format('truetype');
+    src: url('../fonts/ubuntu/Ubuntu-RI.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Ubuntu Bold';
-    src: url('../fonts/Ubuntu/Ubuntu-B.ttf') format('truetype');
+    src: url('../fonts/ubuntu/Ubuntu-B.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Ubuntu Bold Italic';
-    src: url('../fonts/Ubuntu/Ubuntu-BI.ttf') format('truetype');
+    src: url('../fonts/ubuntu/Ubuntu-BI.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Ubuntu Condensed';
-    src: url('../fonts/Ubuntu/Ubuntu-C.ttf') format('truetype');
+    src: url('../fonts/ubuntu/Ubuntu-C.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Ubuntu Th';
-    src: url('../fonts/Ubuntu/Ubuntu-Th.ttf') format('truetype');
+    src: url('../fonts/ubuntu/Ubuntu-Th.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
