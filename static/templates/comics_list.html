@@ -3,10 +3,10 @@
 {% block title %}{{ comic }}{% endblock title %}
 
 {% block content %}
-    <h1>Available Episodes</h1>
+    <h1>Available Webtoons</h1>
     <ul>
-        {% for episode in episodes %}
-            <li><a href="/{{ episode }}">{{ episode }}</a></li>
+        {% for comic in comics %}
+            <li><a href="/{{ language }}/{{ comic }}">{{ comic }}</a></li>
         {% endfor %}
     </ul>
 {% endblock content %}
