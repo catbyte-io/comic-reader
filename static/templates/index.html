@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title%}Welcome to the webtoon reader!{% endblock title %}
+
+{% block content %}
+    <h1>Select Webtoon Language</h1>
+    <ul>
+        {% for language in languages %}
+            <li><a href="/{{ language }}">{{ language }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock content %}
