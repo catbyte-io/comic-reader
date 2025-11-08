@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ comic }}{% endblock title %}
+
+{% block content %}
+    <h1>Available Episodes</h1>
+    <ul>
+        {% for episode in episodes %}
+            <li><a href="/{{ episode }}">{{ episode }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock content %}
