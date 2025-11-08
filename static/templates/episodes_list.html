@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ comic }} Episodes{% endblock title %}
+
+{% block content %}
+    <h1>{{ comic }} Episodes</h1>
+    <ul>
+        {% for episode in episodes %}
+            <li><a href="/{{ language }}/{{ comic }}/{{ episode }}">{{ episode }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock content %}
