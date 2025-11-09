@@ -1,18 +1,30 @@
 from flask import Flask, render_template, request, url_for, send_from_directory
+from flask_wtf import FlaskForm
+from wtforms import StringField, URLField, RadioField, SubmitField
+from wtforms.validators import DataRequired, URL
 
 import os
 import sqlite3
 
 
 app = Flask(__name__, template_folder='./static/templates')
+app.config["SECRET_KEY"] = '2ah!gh27#g40s5w5&-5f0ehjr@$&'  # For CSRF protection
 
+# The path where comics are stored
 path = '../../data'
+
+# Define form
+class AddForm(FlaskForm):
+    title = StringField('title', validators=[DataRequired()])
+    url = URLField('url', validators=[DataRequired(), URL()])
+    language = RadioField('language', choices=[('english', 'English'), ('korean', 'Korean')], validators=[DataRequired()])
+    submit = SubmitField('submit')
 
 def init_db():
     with sqlite3.connect('./db/webtoons.db') as conn:
         cursor = conn.cursor()
         cursor.execute('''
-            CREATE TABLE IF NOT EXISTS entries (
+            CREATE TABLE IF NOT EXISTS comics (
                 id INTEGER PRIMARY KEY,
                 title TEXT NOT NULL,
                 url TEXT NOT NULL,
@@ -43,15 +55,34 @@ def episodes_list(language, comic):
 def episode_page(language, comic, episode):
     # Images in the chapter folder
     images = os.listdir(f'{path}/{language}/{comic}/{episode}')
-    return render_template('episode.html', language=language, comic=comic, episode=episode, images=images)
+    images.sort()
+    return render_template('episode.html', path=path, language=language, comic=comic, episode=episode, images=images)
+
+@app.route('/images/<language>/<comic>/<episode>/<image>')
+def serve_image(language, comic, episode, image):
+    return send_from_directory(f'{path}/{language}/{comic}/{episode}', image)
 
 @app.route('/add-comic', methods=['GET', 'POST'])
 def add_comic():
-    if request.method == 'POST':
-        title = request.form['title']
-        url = request.form['url']
-        language = request.form['language']
+    form = AddForm()
+    if form.validate_on_submit():
+        title = form.title.data
+        url = form.url.data
+        language = form.language.data
 
+        try:
+            with sqlite3.connect('./db/webtoons.db') as conn:
+                cursor = conn.cursor()
+                cursor.execute('''
+                    INSERT INTO comics (title, url, language)
+                    VALUES (?, ?, ?)    
+                ''', (title, url, language))
+                conn.commit()
+
+        except Exception as e:
+            print(f'Exception: {type(e).__name__} {e}')
+
+    return render_template('add_comic.html', form=form)
 
 
 if __name__=='__main__':
