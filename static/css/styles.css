@@ -67,6 +67,11 @@ code {
   font-family: 'Ubuntu Mono';
 }
 
+div {
+  display: block;
+  unicode-bidi: isolate;
+}
+
 footer {
   /* Keep footer at the bottom and control text size */
   bottom: 0;
@@ -84,12 +89,18 @@ i {
 }
 
 li {
+  display: list-item;
+  list-style: none;
   font-size: 1.5em;
 }
 
 main {
   /* Make sure main content fills the page */
   flex: 1;
+}
+
+p {
+  margin-bottom: 0%;
 }
 
 ul {
@@ -108,6 +119,13 @@ ul {
   margin-top: 3rem;
 }
 
+#ct {
+  clear: both;
+  width: 100%;
+  background-color: #fff;
+  padding-bottom: 0%;
+}
+
 .accent.mint {
   color: #00f1f5ac;
 }
@@ -124,6 +142,10 @@ ul {
   font-family: var(--bs-body-font-family);
   background-color: var(--ck-color-base-background);
   color: var(--ck-color-base-text);
+}
+
+.hide {
+  display: none;
 }
 
 .fill-width {
@@ -179,6 +201,10 @@ ul {
 
 .read-the-docs {
   color: #888;
+}
+
+.viewer_fixed {
+  position: fixed;
 }
 
 /* Responsive grid layout as implemented at https://www.w3schools.com/howto/howto_css_image_grid_responsive.asp */
