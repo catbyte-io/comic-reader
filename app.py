@@ -53,10 +53,26 @@ def episodes_list(language, comic):
 
 @app.route('/<language>/<comic>/<episode>')
 def episode_page(language, comic, episode):
+    # Get list of all available episodes
+    episodes = os.listdir(f'{path}/{language}/{comic}')
+
+    # Calculate prev and next episodes
+    episode_num = int(episode)
+    prev_ep_num = episode_num - 1
+    prev_episode = str(prev_ep_num).zfill(3)
+    next_ep_num = episode_num + 1
+    next_episode = str(next_ep_num).zfill(3)
+
+    # Handle episodes not existing
+    if prev_episode not in episodes:
+        prev_episode = episode
+    if next_episode not in episodes:
+        next_episode = episode
+
     # Images in the chapter folder
     images = os.listdir(f'{path}/{language}/{comic}/{episode}')
     images.sort()
-    return render_template('episode.html', path=path, language=language, comic=comic, episode=episode, images=images)
+    return render_template('episode.html', path=path, language=language, comic=comic, episode=episode, next_episode=next_episode, prev_episode=prev_episode, images=images)
 
 @app.route('/images/<language>/<comic>/<episode>/<image>')
 def serve_image(language, comic, episode, image):
