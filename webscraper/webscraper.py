@@ -96,7 +96,7 @@ def main():
                     episode_no = extract_no(episode_url)
 
                     # Directory to save episode
-                    episode_dir = os.path.join(location, webtoon_title, episode_no)
+                    episode_dir = os.path.join(location, webtoon_title, episode_no.zfill(3))
 
                     # Create the directories if not exists
                     os.makedirs(episode_dir, exist_ok=True)
