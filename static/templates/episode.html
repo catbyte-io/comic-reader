@@ -17,7 +17,12 @@
         <hr>
         <div id="ct">
             <div id="toonLayer" class="toon-view-lst">
-                <div id="navBanner" class="viewer-fixed hide">
+                <div id="topBanner" class="viewer-fixed top hide">
+                    <div class="left">
+                        <a id="homeNav" class="logo" href="/"><img class="reduce" src="{{ url_for('static', filename='images/favicon.ico') }}"></img></a>
+                    </div>
+                </div>
+                <div id="navBanner" class="viewer-fixed bottom hide">
                     <div class="left">
                         <a id="prev" href="/{{ language }}/{{ comic }}/{{ prev_episode }}" data-prev="/{{ language }}/{{ comic }}/{{ prev_episode }}"><i class="bi bi-arrow-left-circle"></i></a>
                     </div>                    
