@@ -33,7 +33,7 @@ def main():
     driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
     with sqlite3.connect('../db/webtoons.db') as conn:
-        df = pd.read_sql_query('SELECT * FROM webtoons', conn)
+        df = pd.read_sql_query('SELECT * FROM comics', conn)
         filtered_df = df[df['language'] == 'korean']
         title_urls = filtered_df['url'].unique()
 
