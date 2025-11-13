@@ -52,7 +52,7 @@ def main():
         try:
             driver.get(title_url)
 
-            webtoon_title = driver.title.split(' : ')[0]
+            webtoon_title = driver.title.split(' :: ')[0]
             print(f'Collecting episode urls for {webtoon_title}...')
 
             episode_urls = []
@@ -61,7 +61,11 @@ def main():
 
             while True:
                 # Get all episode urls on current page
-                episode_list = driver.find_elements(By.CSS_SELECTOR, 'ul.section_episode_list')
+                episode_list = driver.find_element(By.CSS_SELECTOR, 'ul.section_episode_list')
+
+                list_items = episode_list.find_elements(By.CSS_SELECTOR, 'li:not(.lock)')
+
+                url_elements = list_items.find_elements(By.CSS_SELECTOR, 'a')
 
                 episode_urls.extend([element.get_attribute('href') for element in url_elements])
 
@@ -100,8 +104,14 @@ def main():
 
                     time.sleep(5)
 
+            # Determine how many episodes are already downloaded and use that number to reduce the list to download
+            comic_dir = os.path.join(location, webtoon_title)
+            saved_episodes = os.listdir(comic_dir).sort()
+            num_episodes = len(saved_episodes)
+            download_episode_urls = episode_urls[num_episodes:]
+
             # Make request for each episode
-            for episode_url in episode_urls:
+            for episode_url in download_episode_urls:
                 try:
                     driver.get(episode_url)
 
@@ -132,7 +142,7 @@ def main():
                         count = int(filename)
                         count += 1
                         filename = str(count).zfill(4)
-
+                    
                     # Prevent rapid requests
                     time.sleep(5)
 
