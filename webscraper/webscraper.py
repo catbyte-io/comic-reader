@@ -61,30 +61,42 @@ def main():
 
             while True:
                 # Get all episode urls on current page
-                url_elements = driver.find_elements(By.CSS_SELECTOR, 'a.EpisodeListList__link--DdClU')
+                episode_list = driver.find_elements(By.CSS_SELECTOR, 'ul.section_episode_list')
 
                 episode_urls.extend([element.get_attribute('href') for element in url_elements])
 
-                # Collect available page numbers
-                pagination_buttons = driver.find_elements(By.CSS_SELECTOR, 'button.Paginate__page--iRmGj')
-                page_numbers = [int(button.text) for button in pagination_buttons]
+                # Determine if there is a next button for pagination, and if not use numbered pagination
+                btn_next = driver.find_element(By.CLASS_NAME, 'btn_next')
 
-                # Check for the last page
-                next_page = current_page + 1
-
-                if next_page in page_numbers:
-                    # Find next page button
-                    next_button = driver.find_element(By.XPATH, f"//button[text()='{next_page}']")
-
-                    # Exit if no more buttons
-                    if not next_button:
+                if btn_next:
+                    # Break if the next button is disabled
+                    disabled = 'disabled'
+                    if disabled in btn_next.get_attribute('class'):
                         break
-                    
-                    # Click the next page button
-                    next_button.click()
+                    else:
+                        btn_next.click()
 
-                    # Update page
-                    current_page = next_page
+                else:
+                    # Collect available page numbers
+                    pagination_buttons = driver.find_elements(By.CSS_SELECTOR, 'button.Paginate__page--iRmGj')
+                    page_numbers = [int(button.text) for button in pagination_buttons]
+
+                    # Check for the last page
+                    next_page = current_page + 1
+
+                    if next_page in page_numbers:
+                        # Find next page button
+                        next_button = driver.find_element(By.XPATH, f"//button[text()='{next_page}']")
+
+                        # Exit if no more buttons
+                        if not next_button:
+                            break
+                        
+                        # Click the next page button
+                        next_button.click()
+
+                        # Update page
+                        current_page = next_page
 
                     time.sleep(5)
 
@@ -134,7 +146,7 @@ def main():
 
         except Exception as e:
             print(f'Exception: {type(e).__name__} {e}')
-            
+     driver.quit()       
 
 if __name__ == '__main__':
     main()
