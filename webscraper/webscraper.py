@@ -34,7 +34,8 @@ def main():
 
     with sqlite3.connect('../db/webtoons.db') as conn:
         df = pd.read_sql_query('SELECT * FROM webtoons', conn)
-        title_urls = df['url'].unique()
+        filtered_df = df[df['language'] == 'korean']
+        title_urls = filtered_df['url'].unique()
 
     # For each webtoon in the database make a driver request
     for title_url in title_urls:
