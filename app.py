@@ -28,7 +28,8 @@ def init_db():
                 id INTEGER PRIMARY KEY,
                 title TEXT NOT NULL,
                 url TEXT NOT NULL,
-                language TEXT NOT NULL
+                language TEXT NOT NULL,
+                last_episode TEXT NOT NULL
             )
         ''')
         conn.commit()
@@ -85,14 +86,15 @@ def add_comic():
         title = form.title.data
         url = form.url.data
         language = form.language.data
+        last_episode = '0000'  # Default value
 
         try:
             with sqlite3.connect('./db/webtoons.db') as conn:
                 cursor = conn.cursor()
                 cursor.execute('''
-                    INSERT INTO comics (title, url, language)
+                    INSERT INTO comics (title, url, language, last_episode)
                     VALUES (?, ?, ?)    
-                ''', (title, url, language))
+                ''', (title, url, language, last_episode))
                 conn.commit()
 
         except Exception as e:
