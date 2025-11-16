@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, url_for, send_from_directory
+from flask import Flask, render_template, request, url_for, send_from_directory, flash, redirect
 from flask_wtf import FlaskForm
 from wtforms import StringField, URLField, RadioField, SubmitField
 from wtforms.validators import DataRequired, URL
@@ -95,8 +95,15 @@ def add_comic():
                 ''', (title, url, language))
                 conn.commit()
 
+            # Show success message
+            flash(f'{title} Added Successfully!', 'success')
+
+            # Redirect to clear the form
+            return redirect(url_for('add_comic'))
+
         except Exception as e:
             print(f'Exception: {type(e).__name__} {e}')
+            flash(f'An error occurred while trying to add {title}.', 'danger')
 
     return render_template('add_comic.html', form=form)
 
