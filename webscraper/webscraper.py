@@ -28,13 +28,16 @@ def extract_no(url):
 
 def main():
     # Set directory root path for saving files
-    location = '../../data/'
+    location = '../../../data/'
+
+    # Set the language
+    language = 'korean'
 
     driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
     with sqlite3.connect('../db/webtoons.db') as conn:
         df = pd.read_sql_query('SELECT * FROM comics', conn)
-        filtered_df = df[df['language'] == 'korean']
+        filtered_df = df[df['language'] == language]
         title_urls = filtered_df['url'].unique()
 
     # For each webtoon in the database make a driver request
@@ -65,9 +68,11 @@ def main():
 
                 list_items = episode_list.find_elements(By.CSS_SELECTOR, 'li:not(.lock)')
 
-                url_elements = list_items.find_elements(By.CSS_SELECTOR, 'a')
-
-                episode_urls.extend([element.get_attribute('href') for element in url_elements])
+                # Create a new list for URLs in this loop
+                current_urls = [element.find_element(By.CSS_SELECTOR, 'a').get_attribute('href') for element in list_items]
+                
+                # Extend episode_urls with newly fetched URLs
+                episode_urls.extend(current_urls)
 
                 # Determine if there is a next button for pagination, and if not use numbered pagination
                 btn_next = driver.find_element(By.CLASS_NAME, 'btn_next')
@@ -105,27 +110,38 @@ def main():
                     time.sleep(5)
 
             # Determine how many episodes are already downloaded and use that number to reduce the list to download
-            comic_dir = os.path.join(location, webtoon_title)
-            saved_episodes = os.listdir(comic_dir).sort()
-            num_episodes = len(saved_episodes)
+            comic_dir = os.path.join(location, language, webtoon_title)
+
+            if os.path.exists(comic_dir):  # Check that the directory exists
+                saved_episodes = os.listdir(comic_dir)
+                if saved_episodes:
+                    num_episodes = len(saved_episodes)
+                else:
+                    num_episodes = 0
+            else:
+                num_episodes = 0  # If the directory does not exist, there are 0 saved episodes
+
             download_episode_urls = episode_urls[num_episodes:]
 
             # Make request for each episode
             for episode_url in download_episode_urls:
                 try:
                     driver.get(episode_url)
+                    time.sleep(10)
 
                     # Get episode number
                     episode_no = extract_no(episode_url)
 
                     # Directory to save episode
-                    episode_dir = os.path.join(location, webtoon_title, episode_no.zfill(3))
+                    episode_dir = os.path.join(location, language, webtoon_title, episode_no.zfill(3))
 
                     # Create the directories if not exists
                     os.makedirs(episode_dir, exist_ok=True)
 
+                    comic_layer = driver.find_element(By.CLASS_NAME, 'toon_view_lst')
+
                     # Find all image elements with comic content
-                    img_elements = driver.find_elements(By.CSS_SELECTOR, "img[alt='comic content']")
+                    img_elements = comic_layer.find_elements(By.CSS_SELECTOR, 'img')
                     img_urls = [img.get_attribute('src') for img in img_elements]
 
                     # initialize filenames and pad with leading zeros
@@ -137,7 +153,7 @@ def main():
 
                         # Save image to file
                         r = download.content
-                        with open(f'{episode_dir}{filename}.jpg', 'wb+') as newfile:
+                        with open(f'{episode_dir}/{filename}.jpg', 'wb+') as newfile:
                             newfile.write(r)
                         count = int(filename)
                         count += 1
@@ -156,7 +172,8 @@ def main():
 
         except Exception as e:
             print(f'Exception: {type(e).__name__} {e}')
-     driver.quit()       
+    driver.quit()
+  
 
 if __name__ == '__main__':
     main()
