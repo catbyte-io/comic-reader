@@ -3,38 +3,48 @@
 {% block title %}Add webtoon information{% endblock title %}
 
 {% block content %}
-<form method="POST">
-    {{ form.hidden_tag() }}
-    <div>
-        <label for="{{ form.title.id }}">{{ form.title.label }}</label>
-        {{ form.title }}
-        {% for error in form.title.errors %}
-            <div style="color: red;">{{ error }}</div>
-        {% endfor %}
-    </div>
-    <br>
-    <div>
-        <label for="{{ form.url.id }}">URL with episode list ascending (starting with 1)</label>
-        {{ form.url }}
-        {% for error in form.url.errors %}
-            <div style="color: red;">{{ error }}</div>
-        {% endfor %}
-    </div>
-    <br>
-    <div>
-        <label>{{ form.language.label }}</label>
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            <ul>
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    
+    <form method="POST">
+        {{ form.hidden_tag() }}
         <div>
-            {% for choice in form.language %}
-            <label>
-                {{ choice() }} {{ choice.label }}
-            </label>
+            <label for="{{ form.title.id }}">{{ form.title.label }}</label>
+            {{ form.title }}
+            {% for error in form.title.errors %}
+                <div style="color: red;">{{ error }}</div>
             {% endfor %}
         </div>
-        {% for error in form.language.errors %}
-            <div style="color: red;">{{ error }}</div>
-        {% endfor %}
-    </div>
-    <div>
-        <button type="submit">{{ form.submit.label }}</button>
-</form>
+        <br>
+        <div>
+            <label for="{{ form.url.id }}">URL with episode list ascending (starting with 1)</label>
+            {{ form.url }}
+            {% for error in form.url.errors %}
+                <div style="color: red;">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <br>
+        <div>
+            <label>{{ form.language.label }}</label>
+            <div>
+                {% for choice in form.language %}
+                <label>
+                    {{ choice() }} {{ choice.label }}
+                </label>
+                {% endfor %}
+            </div>
+            {% for error in form.language.errors %}
+                <div style="color: red;">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div>
+            <button type="submit">{{ form.submit.label }}</button>
+    </form>
 {% endblock content %}
