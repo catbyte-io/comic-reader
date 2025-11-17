@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, url_for, send_from_directory,
 from flask_wtf import FlaskForm
 from wtforms import StringField, URLField, RadioField, SubmitField
 from wtforms.validators import DataRequired, URL
+from tasks.scheduler import start_scheduler
 
 import os
 import sqlite3
@@ -109,5 +110,6 @@ def add_comic():
 
 
 if __name__=='__main__':
-    init_db()
+    init_db()  # Initialize database
+    start_scheduler()  # Start scheduled tasks for webscraping
     app.run(debug=True)
