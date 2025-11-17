@@ -26,7 +26,7 @@ def extract_no(url):
     return no_value
 
 
-def main():
+def kcomic_scrape():
     # Set directory root path for saving files
     location = '../../../data/'
 
@@ -176,4 +176,4 @@ def main():
   
 
 if __name__ == '__main__':
-    main()
+    kcomic_scrape()
