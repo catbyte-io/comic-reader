@@ -58,6 +58,10 @@ def kcomic_scrape():
             webtoon_title = driver.title.split(' :: ')[0]
             print(f'Collecting episode urls for {webtoon_title}...')
 
+            # Clean the title for directory path compatibility
+            webtoon_title = webtoon_title.lower()
+            webtoon_title = webtoon_title.replace(" ", "_")
+
             episode_urls = []
             page_numbers = []
             current_page = 1

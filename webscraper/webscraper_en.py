@@ -58,6 +58,10 @@ def ecomic_scrape():
             webtoon_title = driver.title.split(' | ')[1]
             print(f'Collecting episode urls for {webtoon_title}...')
 
+            # Clean the title for directory path compatibility
+            webtoon_title = webtoon_title.lower()
+            webtoon_title = webtoon_title.replace(" ", "_")
+
             episode_cont = driver.find_element(By.CLASS_NAME, 'episode_cont')
             url_elements = episode_cont.find_elements(By.CSS_SELECTOR, 'a')
             episode_urls = [element.get_attribute('href') for element in url_elements]
