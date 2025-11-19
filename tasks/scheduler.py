@@ -7,8 +7,8 @@ import threading
 
 
 def run_scheduler():
-    schedule.every().wednesday.at("00:00").do(kcomic_scrape())
-    schedule.every().sunday.at("00:00").do(ecomic_scrape())
+    schedule.every().wednesday.at("00:00").do(kcomic_scrape)
+    schedule.every().sunday.at("00:00").do(ecomic_scrape)
 
     while True:
         schedule.run_pending()
