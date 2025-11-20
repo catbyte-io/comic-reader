@@ -28,16 +28,19 @@ def extract_no(url):
 
 def kcomic_scrape():
     # Set directory root path for saving files
-    location = '../../../data/'
+    location = '../../data/'
 
     # Set the language
     language = 'korean'
 
     driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
-    with sqlite3.connect('../db/webtoons.db') as conn:
+    with sqlite3.connect('./db/webtoons.db') as conn:
         df = pd.read_sql_query('SELECT * FROM comics', conn)
         filtered_df = df[df['language'] == language]
+        if filtered_df.empty:
+            print(f"No {language} comics are in the database.")
+            return
         title_urls = filtered_df['url'].unique()
 
     # For each webtoon in the database make a driver request
