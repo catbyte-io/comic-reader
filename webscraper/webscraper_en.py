@@ -105,7 +105,7 @@ def ecomic_scrape():
 
                     # initialize filenames and pad with leading zeros
                     filename = '0'
-                    filename = filename.zfill(4)
+                    filename = filename.zfill(3)
 
                     for img_url in img_urls:
                         download = requests.get(img_url, headers=headers)
@@ -116,7 +116,7 @@ def ecomic_scrape():
                             newfile.write(r)
                         count = int(filename)
                         count += 1
-                        filename = str(count).zfill(4)
+                        filename = str(count).zfill(3)
                     
                     # Prevent rapid requests
                     time.sleep(5)
