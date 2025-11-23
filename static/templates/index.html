@@ -6,7 +6,7 @@
     <h1>Select Webtoon Language</h1>
     <ul>
         {% for language in languages %}
-            <li><a href="/{{ language }}">{{ language }}</a></li>
+            <li><a href="/{{ language }}">{{ language|title }}</a></li>
         {% endfor %}
     </ul>
 {% endblock content %}
