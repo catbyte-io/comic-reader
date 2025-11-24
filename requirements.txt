@@ -1,4 +1,5 @@
 Flask
+Flask-Bcrypt
 flask_wtf
 pandas
 selenium
