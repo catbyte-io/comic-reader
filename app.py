@@ -1,8 +1,11 @@
 from flask import Flask, render_template, request, url_for, send_from_directory, flash, redirect
 from flask_wtf import FlaskForm
-from wtforms import StringField, URLField, RadioField, SubmitField
+from wtforms import StringField, URLField, RadioField, FileField, SubmitField
 from wtforms.validators import DataRequired, URL
+from werkzeug.utils import secure_filename
+from flask_wtf.file import FileAllowed
 from tasks.scheduler import start_scheduler
+from flask_bcrypt import Bcrypt
 
 import os
 import sqlite3
@@ -10,6 +13,8 @@ import sqlite3
 
 app = Flask(__name__, template_folder='./static/templates')
 app.config["SECRET_KEY"] = '2ah!gh27#g40s5w5&-5f0ehjr@$&'  # For CSRF protection
+app.config['UPLOAD_FOLDER'] = os.path.join('static', 'covers')
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 # The path where comics are stored
 path = '../../data'
@@ -19,6 +24,9 @@ class AddForm(FlaskForm):
     title = StringField('title', validators=[DataRequired()])
     url = URLField('url', validators=[DataRequired(), URL()])
     language = RadioField('language', choices=[('english', 'English'), ('korean', 'Korean')], validators=[DataRequired()])
+    cover_image = FileField('cover_image', validators=[
+        FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')
+    ])
     submit = SubmitField('submit')
 
 def init_db():
@@ -27,12 +35,63 @@ def init_db():
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS comics (
                 id INTEGER PRIMARY KEY,
-                title TEXT NOT NULL,
-                url TEXT NOT NULL,
-                language TEXT NOT NULL
+                title TEXT UNIQUE NOT NULL,
+                url TEXT UNIQUE NOT NULL,
+                language TEXT NOT NULL,
+                cover_image TEXT
+            )
+        ''')
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY,
+                username TEXT UNIQUE NOT NULL,
+                password TEXT NOT NULL
+            )
+        ''')
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS bookmarks (
+                id INTEGER PRIMARY KEY,
+                user_id INTEGER,
+                comic_title TEXT NOT NULL,
+                episode TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
             )
         ''')
         conn.commit()
+
+
+# Add an episode bookmark for a specific user
+def add_bookmark(user_id, comic_title, episode):
+    try:    
+        with sqlite3.connect('./db/webtoons.db') as conn:
+            cursor = conn.cursor()
+            cursor.execute('INSERT INTO bookmarks (user_id, comic_title, episode) VALUES (?, ?, ?)', (user_id, comic_title, episode,))
+            conn.commit()
+    except Exception as e:
+        print(f'Trouble adding bookmark. Exception: {e}')
+
+
+# Remove an episode bookmark for a specific user
+def remove_bookmark(user_id, comic_title, episode):
+    try:    
+        with sqlite3.connect('./db/webtoons.db') as conn:
+            cursor = conn.cursor()
+            cursor.execute('DELETE FROM bookmarks WHERE user_id = ? AND comic_title = ? AND episode = ?', (user_id, comic_title, episode,))
+            conn.commit()
+    except Exception as e:
+        print(f'Trouble adding bookmark. Exception: {e}')
+
+
+# Retrieve a user's bookmarks
+def get_bookmarks(user_id):
+    try:
+        with sqlite3.connect('./db/webtoons.db') as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM bookmarks WHERE user_id = ?', (user_id,))
+            results = cursor.fetchall()
+    except Exception as e:
+        print(f'Trouble fetching bookmarks. Exception: {e}')
+
 
 @app.route('/')
 def index():
@@ -50,7 +109,15 @@ def comics_list(language):
 def episodes_list(language, comic):
     # List available episodes for the comic
     episodes = os.listdir(f'{path}/{language}/{comic}')
-    return render_template('episodes_list.html', language=language, comic=comic, episodes=episodes)
+    episodes = sorted(episodes)
+    upload_path = os.path.join(app.config['UPLOAD_FOLDER'], comic)
+    if os.path.exists(upload_path):
+        files = os.listdir(upload_path)
+        if files:
+            cover_filename = files[0]
+    else:
+        cover_filename = None
+    return render_template('episodes_list.html', language=language, comic=comic, episodes=episodes, cover_filename=cover_filename)
 
 @app.route('/<language>/<comic>/<episode>')
 def episode_page(language, comic, episode):
@@ -86,14 +153,27 @@ def add_comic():
         title = form.title.data
         url = form.url.data
         language = form.language.data
+        cover_image = form.cover_image.data
+
+        # Clean the title for directory path compatibility
+        webtoon_title = title.lower()
+        webtoon_title = webtoon_title.replace(" ", "_")
+
+        cover_filename = None
+        if cover_image:
+            cover_filename = secure_filename(cover_image.filename)
+            upload_path = os.path.join(app.config['UPLOAD_FOLDER'], webtoon_title)
+            if not os.path.exists(upload_path):
+                os.makedirs(upload_path)
+            cover_image.save(os.path.join(upload_path, cover_filename))
 
         try:
             with sqlite3.connect('./db/webtoons.db') as conn:
                 cursor = conn.cursor()
                 cursor.execute('''
-                    INSERT INTO comics (title, url, language)
-                    VALUES (?, ?, ?)    
-                ''', (title, url, language))
+                    INSERT INTO comics (title, url, language, cover_image)
+                    VALUES (?, ?, ?, ?)    
+                ''', (webtoon_title, url, language, cover_filename))
                 conn.commit()
 
             # Show success message
