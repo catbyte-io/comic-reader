@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ comic }}{% endblock title %}
+{% block title %}{{ language|title }} Comics{% endblock title %}
 
 {% block content %}
     <h1>Available Webtoons</h1>
     <ul>
         {% for comic in comics %}
-            <li><a href="/{{ language }}/{{ comic }}">{{ comic }}</a></li>
+            <li><a href="/{{ language }}/{{ comic }}">{{ comic|replace('_', ' ')|title }}</a></li>
         {% endfor %}
     </ul>
 {% endblock content %}
