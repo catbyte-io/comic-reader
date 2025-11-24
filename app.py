@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, url_for, send_from_directory, flash, redirect
 from flask_wtf import FlaskForm
-from wtforms import StringField, URLField, RadioField, FileField, SubmitField
-from wtforms.validators import DataRequired, URL
+from wtforms import StringField, URLField, RadioField, FileField, SubmitField, PasswordField
+from wtforms.validators import DataRequired, URL, EqualTo
 from werkzeug.utils import secure_filename
 from flask_wtf.file import FileAllowed
 from tasks.scheduler import start_scheduler
@@ -12,14 +12,15 @@ import sqlite3
 
 
 app = Flask(__name__, template_folder='./static/templates')
-app.config["SECRET_KEY"] = '2ah!gh27#g40s5w5&-5f0ehjr@$&'  # For CSRF protection
+app.config['SECRET_KEY'] = '2ah!gh27#g40s5w5&-5f0ehjr@$&'  # For CSRF protection
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'covers')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+bcrypt = Bcrypt(app)
 
 # The path where comics are stored
 path = '../../data'
 
-# Define form
+# Define comic add form
 class AddForm(FlaskForm):
     title = StringField('title', validators=[DataRequired()])
     url = URLField('url', validators=[DataRequired(), URL()])
@@ -28,6 +29,21 @@ class AddForm(FlaskForm):
         FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')
     ])
     submit = SubmitField('submit')
+
+
+# Define user add form
+class UserForm(FlaskForm):
+    username = StringField('username', validators=[DataRequired()])
+    password = PasswordField('password', validators=[DataRequired()])
+    confirm_password = PasswordField('confirm_password', validators=[DataRequired(), EqualTo('password')])
+    register = SubmitField('register')
+
+# Define login form
+class LoginForm(FlaskForm):
+    username = StringField('username', validators=[DataRequired()])
+    password = PasswordField('password', validators=[DataRequired()])
+    login = SubmitField('login')
+
 
 def init_db():
     with sqlite3.connect('./db/webtoons.db') as conn:
@@ -92,6 +108,48 @@ def get_bookmarks(user_id):
     except Exception as e:
         print(f'Trouble fetching bookmarks. Exception: {e}')
 
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = UserForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+        try:
+            with sqlite3.connect('./db/webtoons.db') as conn:
+                cursor = conn.cursor()
+                cursor.execute('''
+                    INSERT INTO users (username, password)
+                    VALUES (?, ?,)    
+                ''', (username, hashed_password,))
+                conn.commit()
+
+            # Show success message
+            flash(f'{username} Added Successfully!', 'success')
+        except Exception as e:
+            print(f'Trouble adding {username}. Exception: {e}')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+        try:
+            with sqlite3.connect('./db/webtoons.db') as conn:
+                cursor = conn.cursor()
+                user = cursor.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
+
+                if user and bcrypt.check_password_hash(user[1], password):
+                    flash('Login successful!', 'success')
+                    return redirect(url_for('index'))
+
+        except Exception as e:
+            print(f'Trouble logging in for {username}. Exception: {e}')
 
 @app.route('/')
 def index():
