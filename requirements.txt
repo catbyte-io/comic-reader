@@ -1,5 +1,6 @@
 Flask
 Flask-Bcrypt
+Flask-Login
 flask_wtf
 pandas
 selenium
