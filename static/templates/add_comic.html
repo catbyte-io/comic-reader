@@ -13,7 +13,7 @@
         {% endif %}
     {% endwith %}
     
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         <div>
             <label for="{{ form.title.id }}">{{ form.title.label }}</label>
@@ -44,6 +44,11 @@
                 <div style="color: red;">{{ error }}</div>
             {% endfor %}
         </div>
+        <br>
+        <div>
+            {{ form.cover_image.label }} {{ form.cover_image() }}
+        </div>
+        <br>
         <div>
             <button type="submit">{{ form.submit.label }}</button>
     </form>
