@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, url_for, send_from_directory, flash, redirect
+from flask import Flask, render_template, request, url_for, send_from_directory, flash, redirect, session
 from flask_wtf import FlaskForm
 from wtforms import StringField, URLField, RadioField, FileField, SubmitField, PasswordField
 from wtforms.validators import DataRequired, URL, EqualTo
@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename
 from flask_wtf.file import FileAllowed
 from tasks.scheduler import start_scheduler
 from flask_bcrypt import Bcrypt
+from flask_login import current_user, logout_user, login_required
 
 import os
 import sqlite3
@@ -29,7 +30,6 @@ class AddForm(FlaskForm):
         FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')
     ])
     submit = SubmitField('submit')
-
 
 # Define user add form
 class UserForm(FlaskForm):
@@ -109,6 +109,12 @@ def get_bookmarks(user_id):
         print(f'Trouble fetching bookmarks. Exception: {e}')
 
 
+# Injects user authentication status into the app context for templates
+@app.context_processor
+def inject_user_auth():
+    return {'user_authenticated': current_user.is_authenticated}
+
+# App route views
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = UserForm()
@@ -144,12 +150,19 @@ def login():
                 cursor = conn.cursor()
                 user = cursor.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
 
-                if user and bcrypt.check_password_hash(user[1], password):
+                if user and bcrypt.check_password_hash(user[2], password):
+                    session['user_id'] = user[0]
                     flash('Login successful!', 'success')
                     return redirect(url_for('index'))
 
         except Exception as e:
             print(f'Trouble logging in for {username}. Exception: {e}')
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    flash('Successfully logged out', 'info')
+    return redirect(url_for('index'))
 
 @app.route('/')
 def index():
