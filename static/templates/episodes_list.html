@@ -1,9 +1,17 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ comic }} Episodes{% endblock title %}
+{% block title %}{{ comic|replace('_', ' ')|title }} Episodes{% endblock title %}
 
 {% block content %}
-    <h1>{{ comic }} Episodes</h1>
+    <div class="image-container">
+        {% if cover_filename %}
+            <span>
+                <img src="{{ url_for('static', filename='covers/' + comic + '/' + cover_filename) }}">
+            </span>
+        {% else %}
+        {% endif %}
+        <h1>{{ comic|replace('_', ' ')|title }} Episodes</h1>
+    </div>
     <ul>
         {% for episode in episodes %}
             <li><a href="/{{ language }}/{{ comic }}/{{ episode }}">{{ episode }}</a></li>
