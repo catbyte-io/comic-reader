@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from urllib.parse import urlparse, parse_qs
@@ -33,7 +34,10 @@ def kcomic_scrape():
     # Set the language
     language = 'korean'
 
-    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+    options = Options()
+    options.headless = True
+
+    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
 
     with sqlite3.connect('./db/webtoons.db') as conn:
         df = pd.read_sql_query('SELECT * FROM comics', conn)
