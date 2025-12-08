@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Bookmarks{% endblock title %}
+
+{% block content %}
+    <h1>Bookmarks</h1>
+    <ul>
+        {% for bookmark in bookmarks %}
+            <li><a href="/{{ bookmark.language }}/{{ bookmark.comic_title }}/{{ bookmark.episode }}">{{ bookmark.comic_title|replace('_', ' ')|title }}:Episode {{ bookmark.episode }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock content %}
