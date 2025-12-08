@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            <ul>
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    <h1>User Login</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div>
+            <label for="{{ form.username.id }}">Username</label>
+            {{ form.username }}
+            {% for error in form.username.errors %}
+                <div style="color: red;">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <br>
+        <div>
+            <label for="{{ form.password.id }}">Password</label>
+            {{ form.password }}
+            {% for error in form.password.errors %}
+                <div style="color: red;">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <br>
+        <div>
+            <button type="submit">{{ form.login.label }}</button>
+        </div>
+    </form>
+{% endblock content %}
