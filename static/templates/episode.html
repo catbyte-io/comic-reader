@@ -14,6 +14,15 @@
       <title>{% block page_title %}{% endblock page_title %}</title>
     </head>
     <body>
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                <ul>
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
         <hr>
         <div id="ct">
             <div id="toonLayer" class="toon-view-lst">
@@ -21,11 +30,21 @@
                     <div class="left">
                         <a id="homeNav" class="logo" href="/"><img class="reduce" src="{{ url_for('static', filename='images/favicon.ico') }}"></img></a>
                     </div>
+                    <div class="right">
+                        <!--bookmark button-->
+                        <form method="POST" action="{{ url_for('episode_page', language=language, comic=comic, episode=episode) }}">
+                            <button id="bookmarkButton" type="submit" class="btn">
+            
+                                <i class="{% if user_authenticated and bookmark_exists %}bi bi-bookmark-fill{% else %}bi bi-bookmark{% endif %}"></i>
+
+                            </button>
+                        </form>
+                    </div>  
                 </div>
                 <div id="navBanner" class="viewer-fixed bottom hide">
                     <div class="left">
                         <a id="prev" href="/{{ language }}/{{ comic }}/{{ prev_episode }}" data-prev="/{{ language }}/{{ comic }}/{{ prev_episode }}"><i class="bi bi-arrow-left-circle"></i></a>
-                    </div>                    
+                    </div>             
                     <div class="right">
                         <a id="next" href="/{{ language }}/{{ comic }}/{{ next_episode }}" data-next="/{{ language }}/{{ comic }}/{{ next_episode }}"><i class="bi bi-arrow-right-circle"></i></a>
                     </div>
@@ -43,6 +62,7 @@
         </div>
         <script src="{{ url_for('static', filename='js/hide.js')}}"></script>
         <script src="{{ url_for('static', filename='js/swipe.js')}}"></script>
+        <script src="{{ url_for('static', filename='js/bookmark.js')}}"></script>
         <!-- Link to Bootstrap JS and its dependencies --> 
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script> 
