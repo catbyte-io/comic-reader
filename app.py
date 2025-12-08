@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 from flask_wtf.file import FileAllowed
 from tasks.scheduler import start_scheduler
 from flask_bcrypt import Bcrypt
-from flask_login import current_user, logout_user, login_required
+from flask_login import LoginManager, UserMixin, current_user, login_user, logout_user, login_required
 
 import os
 import sqlite3
@@ -17,6 +17,7 @@ app.config['SECRET_KEY'] = '2ah!gh27#g40s5w5&-5f0ehjr@$&'  # For CSRF protection
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'covers')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
 
 # The path where comics are stored
 path = '../../data'
@@ -44,6 +45,22 @@ class LoginForm(FlaskForm):
     password = PasswordField('password', validators=[DataRequired()])
     login = SubmitField('login')
 
+class User(UserMixin):
+    def __init__(self, id, username, password):
+        self.id = id
+        self.username = username
+        self.password = password
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    with sqlite3.connect('./db/webtoons.db') as conn:
+        cursor = conn.cursor()
+        user = cursor.execute('SELECT * FROM users WHERE id = ?', (user_id,)).fetchone()
+        if user:
+            return User(id=user[0], username=user[1], password=user[2])
+    return None
+
 
 def init_db():
     with sqlite3.connect('./db/webtoons.db') as conn:
@@ -68,34 +85,37 @@ def init_db():
             CREATE TABLE IF NOT EXISTS bookmarks (
                 id INTEGER PRIMARY KEY,
                 user_id INTEGER,
+                language TEXT NOT NULL,
                 comic_title TEXT NOT NULL,
                 episode TEXT NOT NULL,
-                FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+                FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+                UNIQUE (user_id, language, comic_title, episode)
             )
         ''')
         conn.commit()
 
 
 # Add an episode bookmark for a specific user
-def add_bookmark(user_id, comic_title, episode):
+def add_bookmark(user_id, language, comic_title, episode):
     try:    
         with sqlite3.connect('./db/webtoons.db') as conn:
             cursor = conn.cursor()
-            cursor.execute('INSERT INTO bookmarks (user_id, comic_title, episode) VALUES (?, ?, ?)', (user_id, comic_title, episode,))
+            cursor.execute('INSERT INTO bookmarks (user_id, language, comic_title, episode) VALUES (?, ?, ?, ?)', (user_id, language, comic_title, episode,))
             conn.commit()
     except Exception as e:
         print(f'Trouble adding bookmark. Exception: {e}')
 
 
 # Remove an episode bookmark for a specific user
-def remove_bookmark(user_id, comic_title, episode):
+def remove_bookmark(user_id, language, comic_title, episode):
     try:    
         with sqlite3.connect('./db/webtoons.db') as conn:
             cursor = conn.cursor()
-            cursor.execute('DELETE FROM bookmarks WHERE user_id = ? AND comic_title = ? AND episode = ?', (user_id, comic_title, episode,))
+            cursor.execute('DELETE FROM bookmarks WHERE user_id = ? AND language = ? AND comic_title = ? AND episode = ?', (user_id, language, comic_title, episode,))
             conn.commit()
+            print('Bookmark removed successfully.')
     except Exception as e:
-        print(f'Trouble adding bookmark. Exception: {e}')
+        print(f'Trouble removing bookmark. Exception: {e}')
 
 
 # Retrieve a user's bookmarks
@@ -105,8 +125,43 @@ def get_bookmarks(user_id):
             cursor = conn.cursor()
             cursor.execute('SELECT * FROM bookmarks WHERE user_id = ?', (user_id,))
             results = cursor.fetchall()
+            bookmarks = []
+            for row in results:
+                bookmark = {
+                    'id': row[0],
+                    'user_id': row[1],
+                    'language': row[2],
+                    'comic_title': row[3],
+                    'episode': row[4]
+                }
+                bookmarks.append(bookmark)
+            return bookmarks
     except Exception as e:
         print(f'Trouble fetching bookmarks. Exception: {e}')
+
+
+# Retrieve a single bookmark
+def get_bookmark(user_id, language, comic, episode):
+    try:
+        with sqlite3.connect('./db/webtoons.db') as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM bookmarks WHERE user_id = ? AND language = ? AND comic_title = ? AND episode = ?', (user_id, language, comic, episode))
+            result = cursor.fetchone()
+            bookmark = {
+                'id': result[0],
+                'user_id': result[1],
+                'comic_title': result[2],
+                'episode': result[3]
+            }
+            return bookmark
+        
+    except Exception as e:
+        print(f'Trouble fetching bookmark. Exception: {e}')
+
+
+# Toggle bookmark action
+def toggle_bookmark():
+    ...
 
 
 # Injects user authentication status into the app context for templates
@@ -118,6 +173,7 @@ def inject_user_auth():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = UserForm()
+
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
@@ -128,7 +184,7 @@ def register():
                 cursor = conn.cursor()
                 cursor.execute('''
                     INSERT INTO users (username, password)
-                    VALUES (?, ?,)    
+                    VALUES (?, ?)    
                 ''', (username, hashed_password,))
                 conn.commit()
 
@@ -137,13 +193,14 @@ def register():
         except Exception as e:
             print(f'Trouble adding {username}. Exception: {e}')
 
+    return render_template('register.html', form=form)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
-        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
         try:
             with sqlite3.connect('./db/webtoons.db') as conn:
@@ -152,11 +209,19 @@ def login():
 
                 if user and bcrypt.check_password_hash(user[2], password):
                     session['user_id'] = user[0]
+                    user_obj = User(id=user[0], username=user[1], password=user[2])
+                    login_user(user_obj)
+
+                    bookmarks = get_bookmarks(user[0])
+                    session['bookmarks'] = bookmarks
+
                     flash('Login successful!', 'success')
                     return redirect(url_for('index'))
 
         except Exception as e:
             print(f'Trouble logging in for {username}. Exception: {e}')
+    
+    return render_template('login.html', form=form)
 
 @app.route('/logout')
 def logout():
@@ -190,8 +255,34 @@ def episodes_list(language, comic):
         cover_filename = None
     return render_template('episodes_list.html', language=language, comic=comic, episodes=episodes, cover_filename=cover_filename)
 
-@app.route('/<language>/<comic>/<episode>')
+@app.route('/<language>/<comic>/<episode>', methods=['GET', 'POST'])
 def episode_page(language, comic, episode):
+    user_id = session.get('user_id')
+    bookmark_exists = False
+
+    if user_id and 'bookmarks' in session:
+        for bookmark in session['bookmarks']:
+            if (bookmark['language'] == language and
+                bookmark['comic_title'] == comic and
+                bookmark['episode'] == episode):
+                bookmark_exists = True
+                break
+
+    if request.method == 'POST':
+        if user_id:
+            if bookmark_exists:
+                remove_bookmark(user_id, language, comic, episode)
+                # Update cached bookmarks
+                session['bookmarks'] = [b for b in session['bookmarks'] if not (b['language'] == language and b['comic_title'] == comic and b['episode'] == episode)]
+                flash('Bookmark removed')
+            else:
+                add_bookmark(user_id, language, comic, episode)
+                # Update cached bookmarks
+                session['bookmarks'].append({'language': language, 'comic_title': comic, 'episode': episode})
+                flash('Bookmark added')
+        else:
+            flash('Must be logged in to use bookmarks')
+
     # Get list of all available episodes
     episodes = os.listdir(f'{path}/{language}/{comic}')
 
@@ -211,7 +302,7 @@ def episode_page(language, comic, episode):
     # Images in the chapter folder
     images = os.listdir(f'{path}/{language}/{comic}/{episode}')
     images.sort()
-    return render_template('episode.html', path=path, language=language, comic=comic, episode=episode, next_episode=next_episode, prev_episode=prev_episode, images=images)
+    return render_template('episode.html', path=path, language=language, comic=comic, episode=episode, next_episode=next_episode, prev_episode=prev_episode, images=images, bookmark_exists=bookmark_exists)
 
 @app.route('/images/<language>/<comic>/<episode>/<image>')
 def serve_image(language, comic, episode, image):
@@ -258,6 +349,18 @@ def add_comic():
             flash(f'An error occurred while trying to add {title}.', 'danger')
 
     return render_template('add_comic.html', form=form)
+
+@app.route('/bookmarks')
+@login_required
+def bookmarks_view():
+    user_id = session.get('user_id')
+    if user_id:
+        bookmarks = get_bookmarks(user_id)
+
+    else:
+        bookmarks = []
+
+    return render_template('bookmarks.html', bookmarks=bookmarks)
 
 
 if __name__=='__main__':
