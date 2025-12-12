@@ -1,2 +1,0 @@
-Database file will be created here.
-This file exists to create the directory for the repo.
