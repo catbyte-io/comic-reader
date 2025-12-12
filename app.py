@@ -64,6 +64,10 @@ def load_user(user_id):
 
 
 def init_db():
+    # Make the path for the directory if it doesn't exist yet
+    if not os.path.isdir('./db'):
+        os.mkdir('./db')
+
     with sqlite3.connect('./db/webtoons.db') as conn:
         cursor = conn.cursor()
         cursor.execute('''
