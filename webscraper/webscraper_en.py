@@ -12,6 +12,8 @@ import requests
 import sqlite3
 import pandas as pd
 
+from app import BASE_DATA_PATH
+
 
 # Get no value from the url
 def extract_no(url):
@@ -30,7 +32,7 @@ def extract_no(url):
 # Main webscraper
 def ecomic_scrape():
     # Set directory root path
-    location = '../../data/'
+    location = BASE_DATA_PATH
 
     # Set the language
     language = 'english'

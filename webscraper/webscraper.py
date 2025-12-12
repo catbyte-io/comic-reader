@@ -12,6 +12,8 @@ import requests
 import sqlite3
 import pandas as pd
 
+from app import BASE_DATA_PATH
+
 
 # Get no value from the url
 def extract_no(url):
@@ -29,7 +31,7 @@ def extract_no(url):
 
 def kcomic_scrape():
     # Set directory root path for saving files
-    location = '../../data/'
+    location = BASE_DATA_PATH
 
     # Set the language
     language = 'korean'
