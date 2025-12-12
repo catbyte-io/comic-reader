@@ -2,6 +2,9 @@ let startX;
 let prevUrl = document.getElementById('prev').dataset.prev;
 let nextUrl = document.getElementById('next').dataset.next;
 
+
+const SWIPE_THRESHOLD = 300;
+
 const touchStart = (event) => {
     startX = event.touches[0].clientX;
 };
@@ -12,9 +15,9 @@ const touchEnd = (event) => {
     // Calculates distance
     const distanceX = endX - startX;
 
-    if (distanceX > 50) {
+    if (distanceX > SWIPE_THRESHOLD) {
         window.location.href = prevUrl;
-    } else if (distanceX < -50) {
+    } else if (distanceX < -SWIPE_THRESHOLD) {
         window.location.href = nextUrl;
     }
 };
