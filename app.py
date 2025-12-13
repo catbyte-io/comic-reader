@@ -64,6 +64,9 @@ def load_user(user_id):
 
 
 def init_db():
+    if not os.path.exists('./db'):
+        os.mkdir('./db')
+
     print('Initializing...')
     with sqlite3.connect('./db/webtoons.db') as conn:
         cursor = conn.cursor()
@@ -159,11 +162,6 @@ def get_bookmark(user_id, language, comic, episode):
         
     except Exception as e:
         print(f'Trouble fetching bookmark. Exception: {e}')
-
-
-# Toggle bookmark action
-def toggle_bookmark():
-    ...
 
 
 # Injects user authentication status into the app context for templates
@@ -364,6 +362,9 @@ def bookmarks_view():
 
     return render_template('bookmarks.html', bookmarks=bookmarks)
 
+
+init_db()
+start_scheduler()
 
 if __name__=='__main__':
     init_db()  # Initialize database
