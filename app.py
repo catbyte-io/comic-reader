@@ -64,7 +64,7 @@ def load_user(user_id):
 
 
 def init_db():
-
+    print('Initializing...')
     with sqlite3.connect('./db/webtoons.db') as conn:
         cursor = conn.cursor()
         cursor.execute('''
