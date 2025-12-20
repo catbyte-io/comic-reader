@@ -10,3 +10,6 @@ services:
       - static_volume:/comic-reader/static
     ports:
       - "8000:8000"
+
+volumes:
+  static_volume
