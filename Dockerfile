@@ -14,20 +14,20 @@ RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # set up the working directory
-WORKDIR /
+WORKDIR /comic-reader/
 
 # copy and install requirements.txt
 COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
 # copy the application
-COPY . /
+COPY . /comic-reader/
 
 # ensure correct permissions for /tmp/.X11-unix to prevent Xvfb from issuing warnings
 RUN mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
 
 # change ownership of venv to seluser and switch users
-RUN chown -R seluser:seluser /opt/venv /
+RUN chown -R seluser:seluser /opt/venv /comic-reader
 USER seluser
 
 # run Xvfb and the Python script
