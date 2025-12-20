@@ -369,4 +369,3 @@ start_scheduler()
 if __name__=='__main__':
     init_db()  # Initialize database
     start_scheduler()  # Start scheduled tasks for webscraping
-    app.run(debug=True)
