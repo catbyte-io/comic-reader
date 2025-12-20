@@ -31,7 +31,7 @@ def extract_no(url):
 # Main webscraper
 def ecomic_scrape():
     # Set directory root path
-    location = '../../../../data'
+    location = './data/'
 
     # Set the language
     language = 'english'
