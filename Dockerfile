@@ -14,20 +14,20 @@ RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # set up the working directory
-WORKDIR /app
+WORKDIR /
 
 # copy and install requirements.txt
 COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
 # copy the application
-COPY . /app/
+COPY . /
 
 # ensure correct permissions for /tmp/.X11-unix to prevent Xvfb from issuing warnings
 RUN mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
 
 # change ownership of venv to seluser and switch users
-RUN chown -R seluser:seluser /opt/venv /app
+RUN chown -R seluser:seluser /opt/venv /
 USER seluser
 
 # run Xvfb and the Python script
