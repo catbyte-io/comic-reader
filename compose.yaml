@@ -8,4 +8,4 @@ services:
       - /data:/data  # Mount the host's /data directory to the container's /data
     ports:
       - "8000:8000"
-    command: ["gunicorn", "--workers=4", "--bind=10.75.1.61:8000", "app:app"]
+    command: ["gunicorn", "--workers=4", "--bind=0.0.0.0:8000", "app:app"]
