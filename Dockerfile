@@ -31,5 +31,4 @@ RUN chown -R seluser:seluser /opt/venv /app
 USER seluser
 
 # run Xvfb and the Python script
-CMD ["sh", "-c", "Xvfb :99 -ac & gunicorn --workers=4 --bind=0.0.0.0:8000 app:app"]
-
+CMD ["sh", "-c", "Xvfb :99 -ac & exec gunicorn --workers=4 --bind=0.0.0.0:8000 app:app"]
