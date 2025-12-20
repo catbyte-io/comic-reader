@@ -20,8 +20,8 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
-# copy the Python test script
-COPY tests/test_selenium.py .
+# copy the application
+COPY .
 
 # ensure correct permissions for /tmp/.X11-unix to prevent Xvfb from issuing warnings
 RUN mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
@@ -31,4 +31,4 @@ RUN chown -R seluser:seluser /opt/venv /app
 USER seluser
 
 # run Xvfb and the Python script
-CMD ["sh", "-c", "Xvfb :99 -ac 2>/dev/null & python3 -u tests/test_selenium.py"]
+CMD ["sh", "-c", "Xvfb :99 -ac 2>/dev/null & python3 -u app.py"]
