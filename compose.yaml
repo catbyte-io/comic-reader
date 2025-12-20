@@ -5,6 +5,8 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ../../../../data:/data  # Mount the host's /data directory to the container's /data
+      -.:/comic-reader
+      -../../../../data:/data
+      -static_volume:/comic-reader/static
     ports:
       - "8000:8000"
