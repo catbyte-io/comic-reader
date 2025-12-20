@@ -21,7 +21,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
 # copy the application
-COPY .
+COPY . /app/
 
 # ensure correct permissions for /tmp/.X11-unix to prevent Xvfb from issuing warnings
 RUN mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
