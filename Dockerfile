@@ -27,7 +27,8 @@ COPY . /comic-reader/
 RUN mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
 
 # change ownership of venv to seluser and switch users
-RUN chown -R seluser:seluser /opt/venv /comic-reader
+RUN chown -R seluser:seluser /opt/venv 
+RUN chown -R seluser:seluser /comic-reader/
 USER seluser
 
 # run Xvfb and the Python script
