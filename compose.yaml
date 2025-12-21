@@ -5,8 +5,8 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - .:/comic-reader
-      - ../../../../data:/data
+      - .:/comic-reader:rw
+      - ../../../../data:/data:rw
       - static_volume:/comic-reader/static
     ports:
       - "8000:8000"
