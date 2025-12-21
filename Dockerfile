@@ -1,5 +1,7 @@
 FROM selenium/standalone-chrome:131.0
 
+USER root
+
 # install Python3, pip, venv, and Xvfb
 RUN apt-get update && apt-get install -y python3-pip python3-venv xvfb build-essential libffi-dev python3-dev && apt-get clean && rm -rf /var/lib/apt/lists/*
 
