@@ -1,7 +1,5 @@
 FROM selenium/standalone-chrome:131.0
 
-USER root
-
 # install Python3, pip, venv, and Xvfb
 RUN apt-get update && apt-get install -y python3-pip python3-venv xvfb build-essential libffi-dev python3-dev && apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -26,10 +24,7 @@ COPY . /comic-reader/
 # ensure correct permissions for /tmp/.X11-unix to prevent Xvfb from issuing warnings
 RUN mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
 
-# change ownership of venv to seluser and switch users
-RUN chown -R seluser:seluser /opt/venv 
-RUN chown -R seluser:seluser /comic-reader/
-USER seluser
+RUN chmod +x /comic-reader/app.py
 
 # run Xvfb and the Python script
 CMD ["sh", "-c", "Xvfb :99 -ac & exec gunicorn --workers=4 --bind=0.0.0.0:8000 app:app"]
