@@ -16,7 +16,7 @@ app = Flask(__name__, template_folder='./static/templates')
 app.config['SECRET_KEY'] = '2ah!gh27#g40s5w5&-5f0ehjr@$&'  # For CSRF protection
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'covers')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
-app.config['BASE_DATA_PATH'] = os.path.abspath(os.path.join(os.path.dirname(__file__), './data/'))
+app.config['BASE_DATA_PATH'] = os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/'))
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 

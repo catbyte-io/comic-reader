@@ -30,7 +30,7 @@ def extract_no(url):
 
 def kcomic_scrape():
     # Set directory root path for saving files
-    location = './data/'
+    location = '../data/'
 
     # Set the language
     language = 'korean'
