@@ -9,9 +9,6 @@ RUN apt-get update && apt-get install -y python3-pip python3-venv xvfb build-ess
 ENV PYTHONUNBUFFERED=1
 ENV DISPLAY=:99
 
-# Create a user
-RUN useradd -ms /bin/bash cersei
-
 # create and activate a virtual environment
 RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
@@ -30,8 +27,8 @@ COPY . /comic-reader/
 RUN mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
 
 # change ownership of venv to seluser and switch users
-RUN chown -R cersei:cersei /opt/venv /comic-reader
-USER cersei
+RUN chown -R seluser:seluser /opt/venv /comic-reader
+USER seluser
 
 # run Xvfb and the Python script
 CMD ["sh", "-c", "Xvfb :99 -ac & exec gunicorn --workers=4 --bind=0.0.0.0:8000 app:app"]
