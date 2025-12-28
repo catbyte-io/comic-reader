@@ -367,8 +367,7 @@ def bookmarks_view():
 if __name__=='__main__':
     init_db()  # Initialize database
     start_scheduler()  # Start scheduled tasks for webscraping
-    run_scheduler()
+
 else:
     init_db()
     start_scheduler()
-    run_scheduler()
