@@ -29,7 +29,7 @@ ENV PATH="/comic-reader/:$PATH"
 # ensure correct permissions for /tmp/.X11-unix to prevent Xvfb from issuing warnings
 RUN mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
 
-RUN chmod +x /comic-reader/app.py /comic-reader/tasks/scheduler.py /comic-reader/webscraper/webscraper.py /comic-reader/webscraper/webscraper_en.py
+RUN chmod +x /comic-reader/app.py
 
 # run Xvfb and the Python script
 CMD ["sh", "-c", "Xvfb :99 -ac & exec gunicorn --workers=4 --bind=0.0.0.0:8000 app:app"]
