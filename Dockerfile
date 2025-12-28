@@ -8,7 +8,6 @@ RUN apt-get update && apt-get install -y python3-pip python3-venv xvfb build-ess
 # set Python-related environment variables
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 ENV PYTHONUNBUFFERED=1
-ENV PYTHONDONTWRITEBYTECODE=1
 ENV DISPLAY=:99
 
 # create and activate a virtual environment
