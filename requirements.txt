@@ -6,4 +6,7 @@ pandas
 selenium
 webdriver-manager
 schedule
+Celery
+redis
+celery[redis]
 gunicorn
