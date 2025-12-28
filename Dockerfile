@@ -6,7 +6,6 @@ USER root
 RUN apt-get update && apt-get install -y python3-pip python3-venv xvfb build-essential libffi-dev python3-dev && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # set Python-related environment variables
-ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 ENV PYTHONUNBUFFERED=1
 ENV DISPLAY=:99
 
@@ -23,7 +22,6 @@ RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r re
 
 # copy the application
 COPY . /comic-reader/
-ENV PATH="/comic-reader/:$PATH"
 
 # ensure correct permissions for /tmp/.X11-unix to prevent Xvfb from issuing warnings
 RUN mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
