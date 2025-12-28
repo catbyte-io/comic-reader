@@ -4,7 +4,7 @@ from wtforms import StringField, URLField, RadioField, FileField, SubmitField, P
 from wtforms.validators import DataRequired, URL, EqualTo
 from werkzeug.utils import secure_filename
 from flask_wtf.file import FileAllowed
-from tasks.scheduler import start_scheduler
+from tasks.scheduler import start_scheduler, run_scheduler
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, current_user, login_user, logout_user, login_required
 
@@ -363,9 +363,12 @@ def bookmarks_view():
     return render_template('bookmarks.html', bookmarks=bookmarks)
 
 
-init_db()
-start_scheduler()
 
 if __name__=='__main__':
     init_db()  # Initialize database
     start_scheduler()  # Start scheduled tasks for webscraping
+    run_scheduler()
+else:
+    init_db()
+    start_scheduler()
+    run_scheduler()
