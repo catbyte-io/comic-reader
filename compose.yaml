@@ -1,6 +1,6 @@
 services:
   reader:
-    container_name: "comic-reader"
+    container_name: "webtoon"
     build:
       context: .
       dockerfile: Dockerfile
@@ -10,6 +10,35 @@ services:
       - static_volume:/comic-reader/static
     ports:
       - "8000:8000"
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  celery:
+    container_name: "celery"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/comic-reader:rw
+      - ../../../../data:/data:rw
+      - static_volume:/comic-reader/static
+    command: celery -A app.celery worker --loglevel=info
+
+  celery-beat:
+    container_name: "celery-beat"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/comic-reader:rw
+      - ../../../../data:/data:rw
+      - static_volume:/comic-reader/static
+    command: celery -A app.celery beat --loglevel=info
 
 volumes:
   static_volume:

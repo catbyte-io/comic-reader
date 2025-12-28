@@ -4,9 +4,11 @@ from wtforms import StringField, URLField, RadioField, FileField, SubmitField, P
 from wtforms.validators import DataRequired, URL, EqualTo
 from werkzeug.utils import secure_filename
 from flask_wtf.file import FileAllowed
-from tasks.scheduler import start_scheduler, run_scheduler
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, current_user, login_user, logout_user, login_required
+
+from celery import Celery
+from tasks.celery_tasks import register_tasks
 
 import os
 import sqlite3
@@ -17,8 +19,15 @@ app.config['SECRET_KEY'] = '2ah!gh27#g40s5w5&-5f0ehjr@$&'  # For CSRF protection
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'covers')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 app.config['BASE_DATA_PATH'] = os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/'))
+app.config['CELERY_BROKER_URL'] = 'redis://redis:6379/0'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://redis:6379/0'
+
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery.conf.update(app.config)
+
+register_tasks(celery)
 
 # The path where comics are stored
 path = app.config['BASE_DATA_PATH']
@@ -366,8 +375,6 @@ def bookmarks_view():
 
 if __name__=='__main__':
     init_db()  # Initialize database
-    start_scheduler()  # Start scheduled tasks for webscraping
 
 else:
     init_db()
-    start_scheduler()
