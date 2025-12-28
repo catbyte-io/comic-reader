@@ -158,7 +158,7 @@ def kcomic_scrape():
 
                     # Find all image elements with comic content
                     img_elements = comic_layer.find_elements(By.CSS_SELECTOR, 'img')
-                    img_urls = [img.get_attribute('src') for img in img_elements]
+                    img_urls = [img.get_attribute('data-src') or img.get_attribute('src') for img in img_elements]
 
                     # initialize filenames and pad with leading zeros
                     filename = '0'
