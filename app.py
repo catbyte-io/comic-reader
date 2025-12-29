@@ -21,7 +21,7 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 app.config['BASE_DATA_PATH'] = os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/'))
 app.config['CELERY_BROKER_URL'] = 'redis://redis:6379/0'
 app.config['result_backend'] = 'redis://redis:6379/0'
-app.config['timezone'] = 'America/Denver'
+app.config['timezone'] = 'UTC'
 
 
 bcrypt = Bcrypt(app)
