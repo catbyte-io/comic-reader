@@ -118,15 +118,32 @@ def ecomic_scrape():
                     filename = filename.zfill(3)
 
                     for img_url in img_urls:
-                        download = requests.get(img_url, headers=headers)
+                        success = False
+                        retries = 3
 
-                        # Save image to file
-                        r = download.content
-                        with open(f'{episode_dir}/{filename}.jpg', 'wb+') as newfile:
-                            newfile.write(r)
-                        count = int(filename)
-                        count += 1
-                        filename = str(count).zfill(3)
+                        while not success and retries > 0:
+                            try:
+                                download = requests.get(img_url, headers=headers, timeout=10)
+                                download.raise_for_status()
+
+                                # Save image to file
+                                r = download.content
+                                with open(f'{episode_dir}/{filename}.jpg', 'wb+') as newfile:
+                                    newfile.write(r)
+                                count = int(filename)
+                                count += 1
+                                filename = str(count).zfill(3)
+                                success = True
+
+                            except requests.exceptions.SSLError as ssl_err:
+                                print(f"SSL error occurred: {ssl_err}")
+                                retries -= 1
+                                print(f"Tries left: {retries - 1}")
+                                time.sleep(5)
+
+                            except requests.exceptions.ConnectionError as conn_err:
+                                print(f"Connection error occurred: {conn_err}")
+                                break
                     
                     # Prevent rapid requests
                     time.sleep(5)
