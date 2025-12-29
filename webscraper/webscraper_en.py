@@ -138,7 +138,7 @@ def ecomic_scrape():
                             except requests.exceptions.SSLError as ssl_err:
                                 print(f"SSL error occurred: {ssl_err}")
                                 retries -= 1
-                                print(f"Tries left: {retries - 1}")
+                                print(f"Tries left: {retries}")
                                 time.sleep(5)
 
                             except requests.exceptions.ConnectionError as conn_err:
