@@ -6,7 +6,7 @@
     <div class="image-container">
         {% if cover_filename %}
             <span>
-                <img src="{{ url_for('static', filename='covers/' + comic + '/' + cover_filename) }}">
+                <img class="fill-width center" src="{{ url_for('static', filename='covers/' + comic + '/' + cover_filename) }}">
             </span>
         {% else %}
         {% endif %}
