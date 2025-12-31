@@ -25,7 +25,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - .:/comic-reader:rw
-      - ../../../../data:/data:rw
+      - ../../data:/data:rw
       - static_volume:/comic-reader/static
     command: celery -A app.celery worker --loglevel=info
 
@@ -36,7 +36,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - .:/comic-reader:rw
-      - ../../../../data:/data:rw
+      - ../../data:/data:rw
       - static_volume:/comic-reader/static
     command: celery -A app.celery beat --loglevel=info
 
