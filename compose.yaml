@@ -27,7 +27,7 @@ services:
       - .:/comic-reader:rw
       - ../../../../data:/data:rw
       - static_volume:/comic-reader/static
-    command: celery -A app.celery worker --loglevel=info
+    command: celery -A tasks.celery_worker worker --loglevel=info
 
   celery-beat:
     container_name: "celery-beat"
@@ -38,7 +38,7 @@ services:
       - .:/comic-reader:rw
       - ../../../../data:/data:rw
       - static_volume:/comic-reader/static
-    command: celery -A app.celery beat --loglevel=info
+    command: celery -A tasks.celery_worker beat --loglevel=info
 
 volumes:
   static_volume:

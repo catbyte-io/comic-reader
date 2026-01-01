@@ -1,3 +1,4 @@
+import logging
 from celery import Celery
 from celery.schedules import crontab
 from webscraper.webscraper import kcomic_scrape
@@ -7,20 +8,22 @@ def register_tasks(celery: Celery):
     @celery.task
     def kcomic_task():
         kcomic_scrape()
+        logging.info("kcomic_task started")
 
     @celery.task
     def ecomic_task():
         ecomic_scrape()
+        logging.info("ecomic_task started")
 
     # Schedule tasks
     celery.conf.beat_schedule = {
         'kcomic-scrape-every-wednesday': {
             'task': 'tasks.celery_tasks.kcomic_task',
-            'schedule': crontab(day_of_week='wed', hour=0, minute=0),
+            'schedule': crontab(day_of_week='thu', hour=18, minute=0),
         },
         'ecomic-scrape-every-sunday': {
             'task': 'tasks.celery_tasks.ecomic_task',
-            'schedule': crontab(day_of_week='sun', hour=0, minute=0),
+            'schedule': crontab(day_of_week='sun', hour=18, minute=0),
         },
     }
     
