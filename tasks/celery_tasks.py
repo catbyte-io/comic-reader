@@ -19,7 +19,7 @@ def register_tasks(celery: Celery):
     celery.conf.beat_schedule = {
         'kcomic-scrape-every-wednesday': {
             'task': 'tasks.celery_tasks.kcomic_task',
-            'schedule': crontab(day_of_week='thu', hour=18, minute=0),
+            'schedule': crontab(day_of_week='thu', hour=19, minute=5),
         },
         'ecomic-scrape-every-sunday': {
             'task': 'tasks.celery_tasks.ecomic_task',
